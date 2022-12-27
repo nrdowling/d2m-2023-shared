@@ -2,6 +2,9 @@
 .Rhistory
 .Rapp.history
 
+# Folder for everything that should remain local-only
+/LOCAL/
+
 # Session Data files
 .RData
 
