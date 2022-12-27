@@ -3,7 +3,7 @@
 .Rapp.history
 
 # Folder for everything that should remain local-only
-/LOCAL/
+localonly/*
 
 # Session Data files
 .RData
