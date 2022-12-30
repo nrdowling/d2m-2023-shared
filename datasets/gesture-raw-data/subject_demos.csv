@@ -1,0 +1,19 @@
+id,sex,race,ethn,missed_visits,income_category,mother_education
+24,F,BL,N,0,6,Advanced Degree
+29,F,2+,N,0,6,Advanced Degree
+33,M,BL,N,0,4,Some College or Trade School
+37,F,WH,N,0,5,Bachelor's Degree
+42,M,WH,N,1,2,Some College or Trade School
+43,M,WH,N,0,4,Bachelor's Degree
+44,F,BL,N,0,3,Some College or Trade School
+48,M,WH,N,0,6,Advanced Degree
+50,M,WH,N,0,4,Bachelor's Degree
+62,M,WH,N,0,6,High School or GED
+74,F,WH,N,0,6,Bachelor's Degree
+77,F,BL,N,0,1,Some High School
+78,M,WH,N,0,3,Advanced Degree
+84,M,WH,N,0,6,Some College or Trade School
+88,M,WH,H,0,5,Advanced Degree
+92,M,WH,N,0,6,Bachelor's Degree
+103,F,2+,N,0,5,Bachelor's Degree
+105,F,WH,N,0,4,Bachelor's Degree
