@@ -97,3 +97,113 @@ adultdata <- adultdata %>%
         race = as_factor(race),
         race = factor(race, labels = c("White", "Black", "AsiPacIsl",
                                        "AmerIndFirsNat", "Other")))
+
+### EXAMPLE PLOTS ###
+#library(ggsci)
+#library(ggthemes)
+
+## 1-VARIABLE
+
+## Histogram, basic
+ggplot(adultdata, aes(age)) + geom_histogram()
+
+## Histogram, complex - adds in grouping (factor) variable
+ggplot(adultdata, aes(age, fill = education.bins)) + 
+    geom_histogram(binwidth = 10, position="identity") +
+    theme_clean() +
+    labs(title="Distribution of participant age by education level",
+         x="Participant age (years)",
+         y="Participants (n)",
+         fill="Education Level") +
+    theme(legend.position = "bottom") +
+    scale_fill_uchicago(alpha = .5)
+
+    
+## Bar, basic
+ggplot(data=adultdata, aes(x=workclass)) + geom_bar()
+
+## Bar, complex - adds in grouping (factor) variable
+ggplot(data=adultdata, aes(x=workclass, fill = education.bins)) + 
+    geom_bar(position = "fill") +
+    theme_excel() +
+    scale_fill_futurama() +
+    theme(legend.position = "top",
+          axis.text.x = element_text(angle = 45,hjust=1),
+          plot.title = element_text(color="darkgreen",  family="Courier")) +
+    labs(title="Proportional education level makeup of working classes",
+         x="Working class category",
+         y=element_blank(),
+         fill="Highest degree attained")
+
+## 2+ VARIABLE
+
+## Point, simple
+ggplot(data=adultdata, aes(x=age, y=`hours-per-week`)) + geom_point()
+
+## Point, pretty - no additional variables
+ggplot(data=adultdata, aes(x=age, y=`hours-per-week`)) + 
+    geom_point(alpha=.2, color="purple") +
+    theme_bw() +
+    labs(title="Association between work hours and age",
+         x="Age",
+         y="Weekly work hours",
+         caption = "Note: Work hours are participant self-report.")
+
+## Point, complex - no additional variables, add linear regression smoothing
+ggplot(data=adultdata, aes(x=age, y=`hours-per-week`)) + 
+    geom_point(alpha=.2, color="purple") +
+    geom_smooth(alpha=.5, color = "black", linetype="dashed") +
+    geom_smooth(method="lm", alpha=.5, color = "black", linetype="solid") +
+    theme_bw() +
+    theme(plot.title = element_text(hjust=.5)) +
+    labs(title="Association between work hours and age",
+         x="Age",
+         y="Weekly work hours",
+         caption = "Linear smoothing shown as solid line; lowess smoothing as dashed line.")
+
+## Point, complex - filter to (and group by) highest and lowest education levels
+ggplot(data=filter(adultdata, education.bins %in% c("pre-HS", "BA+")), aes(x=age, y=`hours-per-week`)) + 
+    geom_point(alpha=.8, aes(color=education.bins)) +
+    geom_smooth(alpha=.5, fill="white",color="black", size=.7, aes(linetype=education.bins)) +
+    theme_economist() +
+    scale_color_locuszoom() +
+    labs(title="Association between work hours and age",
+         x="Age",
+         y="Weekly work hours",
+         linetype="Education",
+         color="Education") +
+    theme(plot.title = element_text(hjust=.5),
+          legend.key = element_rect(fill="transparent"),
+          legend.background = element_rect(fill="white"))
+
+
+## Boxplot, simple
+
+ggplot(adultdata, aes(x=`marital-status`, y=age)) + geom_boxplot()
+
+
+## Boxplot, pretty
+
+ggplot(adultdata, aes(x=`marital-status`, y=age)) + 
+    geom_boxplot(fill="lightblue") +
+    theme_bw() +
+    labs(title="Spread of age by marital status",
+         y="Marital status",
+         x="Age") +
+    theme(axis.text.x = element_text(angle=45, hjust=1),
+          plot.title = element_text(color="darkred", hjust=1))
+
+## Boxplot, complex - group by income level
+ggplot(adultdata, aes(y=`marital-status`, x=age)) + 
+    geom_boxplot(aes(fill=income)) +
+    theme_bw() +
+    labs(title="Spread of age by marital status and income",
+         x="Marital status",
+         y="Age",
+         fill="Income level (US$)") +
+    theme(title=element_text(family="mono"),
+        axis.text.x = element_text(color="darkblue"),
+          plot.title = element_text(color="darkred", hjust=1),
+        
+          legend.position="bottom") +
+    scale_fill_jama()
