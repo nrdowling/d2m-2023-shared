@@ -89,6 +89,20 @@ ggplot(adultdata, aes(age, factor(`education-num`),
 ggplot(adultdata, aes(age, factor(`education-num`))) +
     geom_violin() ## looks the same without the group argument
 
+## A note about violin plots^^ : In last week's slides I said I didn't understand why fill and color were bolded (indicating they were aesthetics). After looking at the documentation and messing around a bit -- turns out I was right to be confused!! Those arguments should be set OUTSIDE the aes() (or at least, for that plot example in the slides they were). Color was directly mapped to blue and fill to gray, but neither was dependent on data. Behold:
+
+ggplot(adultdata, aes(age, factor(`education-num`))) +
+    geom_violin(color='blue', fill='gray') ## outside aes() - colors look as expected
+
+ggplot(adultdata, aes(age, factor(`education-num`))) +
+    geom_violin(aes(color=`capital-gain`)) ## continuous variable inside aes() hmm, nothing seems to be changing here
+
+ggplot(adultdata, aes(age, factor(`education-num`))) +
+    geom_violin(aes(color=workclass)) ## factor variable inside aes() - SOMETHING is happening, but what's going on???
+
+ggplot(adultdata, aes(age, factor(`education-num`))) +
+    geom_violin(aes(fill=sex)) ## factor inside aes() - aha! reasonably, this adds a new grouping variable (similar for fill)
+
 # From the ggplot documentation about the group aesthetic
 
 #For most applications the grouping is set implicitly by mapping one or more discrete variables to x, y, colour, fill, alpha, shape, size, and/or linetype. This is demonstrated in the examples below.
@@ -170,6 +184,17 @@ ggplot(adultdata, aes(age)) + geom_density()
 ggplot(adultdata, aes(`capital-gain`)) + geom_density()
 ggplot(adultdata, aes(age, `capital-gain`)) + geom_jitter()
 ggplot(adultdata, aes(age, `capital-loss`)) + geom_jitter()
+
+## ok what's the deal with jitter?? why not just use geom_point?
+
+# compare to the matching jitter above
+ggplot(adultdata, aes(age, `capital-loss`)) + geom_point() 
+
+# Both graphs represent exactly the same data? What is jitter doing? Why would you want jitter?
+
+## fwiw, geom_jitter is more or less a reskin of geom_point with position set to jitter by default
+ggplot(adultdata, aes(age, `capital-loss`)) + geom_point(position = "jitter")
+
 
 
 # Big ol' clean-up from our data prep demo
@@ -265,3 +290,143 @@ ggplot(adultdata, aes(education.bins, age, color = education.bins)) +
     facet_grid(. ~ race)
 
 # Was binning age and education helpful? Why (not)? 
+
+
+## 5-2 MAKING PRETTY FIGURES ##
+
+## What goes where? Inside or outside aes()? In the original ggplot() function or in the geom_*() function?
+
+### Looking at within aes() only...
+
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, 
+                 color = Species)) +
+    geom_point()
+
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) +	
+    geom_point(aes(color = Species))
+
+ggplot(iris) +	
+    geom_point(aes(x = Sepal.Length, y = Sepal.Width,	
+                   color = Species))
+
+ggplot() +	
+    geom_point(data = iris,	
+               aes(x = Sepal.Length, y = Sepal.Width, 
+                   color = Species))
+
+#Dataset and aesthetic mappings in ggplot() will be inherited with the addition of later geoms
+
+ggplot(mpg,	aes(x = cyl, y = hwy,		
+                fill = class, color = class)) +	
+    geom_jitter(shape = 24) +
+    geom_smooth(method = "lm")
+
+ggplot(mpg,	aes(x = cyl, y = hwy,
+                fill = class)) +
+    geom_jitter(shape = 24) +
+    geom_smooth(aes(color = class), method = "lm")
+
+# You can set the same mapping type across multiple geoms
+# When/why would you want to do that?
+
+# take care when setting the same mapping type differently across geoms, things get wonky quickly!
+
+ggplot(mpg,
+       aes(x = cyl, y = hwy)) +
+    geom_jitter(aes(color = manufacturer), shape = 24) +
+    geom_smooth(aes(color = class), method = "lm")
+
+ggplot(mpg,	aes(x = cyl, y = hwy,
+                fill = class, color = class)) +
+    geom_jitter(shape = 24) +
+    geom_smooth(data = filter(mpg, class != "2seater"),
+                aes(x = cyl, y = hwy),
+                method = "lm")
+
+### !!!STOP!!!
+### If you have not yet cleaned up your adultdata tibble in this session with the big ol' clean up from ^^^ do that now. Quick check to see if you've already done it:
+# 1. Are there NAs or question marks?
+# 2. Are the binned variables there?
+
+ggplot(adultdata, aes(age.bins, `education-num`)) +
+    geom_jitter() +
+    geom_boxplot()
+
+ggplot(adultdata, aes(age.bins, `education-num`)) +
+    geom_jitter(color = "gray50", alpha = 0.1) +
+    geom_boxplot(outlier.shape = NA, alpha = 0.0)
+
+ggplot(adultdata, aes(education.bins, age)) +
+    geom_jitter(color = "gray50", alpha = 0.1) +
+    geom_boxplot(outlier.shape = NA, alpha = 0.0)
+
+# Building up to the plots we saw last time:
+
+ggplot(adultdata, aes(race, fill = income)) +	
+    geom_bar(position = "fill") +	
+    facet_grid(education.bins ~ sex) +	
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(adultdata, aes(education.bins, age,		
+                      color = education.bins)) +
+    geom_jitter(alpha = 0.1) +
+    geom_boxplot(outlier.shape = NA,
+                 alpha = 0.0, color = "black") +
+    facet_grid(. ~ race)
+
+#Adding text-based datapoints and annotations
+mmdata <- read_csv("MM Data.csv")
+mmdata.long <- read_csv("MM Data.csv") %>%
+    pivot_longer(cols = c("Red", "Green", "Blue", "Orange",
+                          "Yellow", "Brown"),
+                 names_to = "Color", values_to = "Number")
+mmdata.long.by.bag <- mmdata.long %>%
+    group_by(Bag, Weight) %>%
+    summarize(
+        total.mms = sum(Number)
+    )
+
+ggplot(mmdata.long.by.bag, aes(Weight, total.mms)) +
+    geom_smooth(method = "lm") +
+    geom_point() +
+    labs(x = "Weight (oz)", y = "# M&M candies") +
+    theme_apa()
+
+
+ggplot(mmdata.long.by.bag, aes(Weight, total.mms, label = Bag)) +
+    geom_smooth(method = "lm") +
+    geom_point() +
+    labs(x = "Weight (oz)", y = "# M&M candies") +
+    geom_text() +
+    theme_apa()
+
+ggplot(mmdata.long.by.bag, aes(Weight, total.mms, label = Bag)) +
+    geom_smooth(method = "lm") +
+    geom_point() +
+    labs(x = "Weight (oz)", y = "# M&M candies") +
+    geom_text(nudge_y = 0.5) +
+    theme_apa()
+
+ggplot(mmdata.long.by.bag, aes(Weight, total.mms, label = Bag)) +
+    geom_smooth(method = "lm") +
+    geom_point() +
+    labs(x = "Weight (oz)", y = "# M&M candies") +
+    geom_text(nudge_y = 0.5) +
+    annotate("text", label = "OOPS...",
+             x = 53, y = 45, size = 8, colour = "red") +
+    theme_apa()
+
+# Let’s rescale the axes; in this case, let’s zoom out!
+    ggplot(mmdata.long.by.bag, aes(Weight, total.mms, label = Bag)) +
+    geom_smooth(method = "lm") +
+    geom_point() +
+    labs(x = "Weight (oz)", y = "# M&M candies") +
+    geom_text(vjust = 0, nudge_y = 0.5) +
+    annotate(
+        "text", label = "HELLO!!",
+        x = 53, y = 45, size = 8, colour = "red") +
+    scale_x_continuous(limits = c(45,55),	
+                       breaks = 45:55) +
+    scale_y_continuous(limits = c(40,70),	
+                       breaks = seq(40,70,10)) +
+    theme_apa()
