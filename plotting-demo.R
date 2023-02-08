@@ -59,20 +59,30 @@ ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +	geom_poi
 
 ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width,	shape = Species)) + geom_point()
 
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width,	color = Species, shape = Species)) + geom_point()
+
 ## Two continuous variables
 
 #adultdata <- read_csv("datasets/adult.data.csv")
 
 ggplot(adultdata, aes(age, `education-num`)) + 
     geom_point()
+
+
+ggplot(adultdata, aes(age, `education-num`)) + 
+    geom_point()
+
 ggplot(adultdata, aes(age, `education-num`)) + 
     geom_jitter() # how is jitter different from point? why would this be helpful? when would it be unnecessary?
 ggplot(adultdata, aes(age, `education-num`)) + 
     geom_smooth()
+
 ggplot(adultdata, aes(age, `education-num`)) + 
     geom_jitter() + 
     geom_smooth(method = "lm")
-ggplot(adultdata, aes(age, `education-num`)) + geom_smooth() + 
+
+ggplot(adultdata, aes(age, `education-num`)) + 
+    geom_smooth() +
     geom_jitter(method = "lm")
 
 
@@ -291,6 +301,51 @@ ggplot(adultdata, aes(education.bins, age, color = education.bins)) +
 
 # Was binning age and education helpful? Why (not)? 
 
+## RECREATE THESE PLOTS
+
+mmdata <- read_csv("datasets/MM Data.csv")
+mmdata.long <- read_csv("datasets/MM Data.csv") %>%
+    pivot_longer(cols = c("Red", "Green", "Blue", "Orange",
+                          "Yellow", "Brown"),
+                 names_to = "Color", values_to = "Number")
+
+
+# plot 1
+
+
+p <- ggplot(mmdata.long, aes(Color, Number, fill=Color)) +
+    geom_boxplot()
+
+
+# plot 2
+
+#ggplot(mmdata.long, aes(Color, Number, fill=Color)) +
+#    geom_boxplot()
+
+p + geom_jitter()
+
+
+## CHALLENGE PLOT
+
+p + geom_dotplot()
+
+
+
+# plot 1
+ggplot(data = mmdata.long, aes(Color, Number)) +
+    geom_boxplot(aes(fill=Color)) 
+
+# plot 2
+ggplot(data = mmdata.long, aes(Color, Number)) +
+    geom_boxplot(aes(fill=Color)) +
+    geom_jitter()
+
+## CHALLENGE PLOT
+ggplot(data = mmdata.long, aes(Color, Number)) +
+    geom_boxplot(aes(fill=Color)) +
+    geom_dotplot(aes(fill = Color), binaxis = "y", stackdir = "up")
+                 
+
 
 ## 5-2 MAKING PRETTY FIGURES ##
 
@@ -430,3 +485,6 @@ ggplot(mmdata.long.by.bag, aes(Weight, total.mms, label = Bag)) +
     scale_y_continuous(limits = c(40,70),	
                        breaks = seq(40,70,10)) +
     theme_apa()
+
+    
+    
