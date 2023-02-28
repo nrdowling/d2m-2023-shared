@@ -1,0 +1,74 @@
+---
+title: "hello world"
+author: "natalie"
+date: "2/23/2023"
+output:
+  html_document:
+    df_print: paged
+bibliography: "inline-cites-demo.bib"
+csl: apa3auth.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+<!--
+Next time we'll start with a papaja template
+-->
+
+This is a reference @xie2018bookdown.
+
+You may want to cite references in different formats depending on the surrounding sentential context, e.g.:
+
+Dowling, in her [-@dowling2023d2mr] course, states that Rmarkdown is awesome.
+
+Rmarkdown is awesome [@xie2018bookdown; @dowling2023d2mr; @dowling2021r]
+
+Rmarkdown is awesome [e.g., @xie2018bookdown; @dowling2023d2mr]
+
+Rmarkdown is awesome [e.g., smooth workflow\; @xie2018bookdown; see also @dowling2023d2mr]
+
+Same-year, same-author publications are automatically disambiguated [e.g., @dowling2021r; @dowling2021productive]
+
+We learned all about ggplot [see @wickham2016r4ds, ch. 1]
+
+We learned about ggplot with @wickham2016r4ds [, ch. 1]
+
+
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+# I just need a basic overview
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+---
+nocite: |
+  @tierney2020rmarkdown, @douglas2022introduction
+---
+
+# References
+
+<div id="refs"></div>
+
+---
+nocite: |
+  @tierney2020rmarkdown, @douglas2022introduction
+---
+

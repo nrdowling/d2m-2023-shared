@@ -40,3 +40,8 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Knitting
+*.docx
+*.pdf
+*.tex
