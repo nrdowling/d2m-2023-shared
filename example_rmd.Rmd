@@ -60,7 +60,7 @@ draft             : no
 
 documentclass     : "apa6"
 classoption       : "man"
-output            : papaja::apa6_pdf
+output            : papaja::apa6_word
 ---
 
 ```{r setup, include = FALSE}
@@ -76,9 +76,13 @@ set.seed(42)
 knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 ```
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut efficitur commodo est quis mattis. Curabitur egestas enim sed est consectetur, eget porta quam viverra. Vivamus elit nisl, egestas vel rutrum fermentum, tempor at neque. Cras eros ipsum, pharetra quis sodales non, dignissim nec nisl. Mauris at ante ex. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aliquam porta massa accumsan, euismod tellus at, condimentum orci. Duis pulvinar, lorem eu feugiat ullamcorper, nisl ante tincidunt tellus, ac egestas nulla felis molestie dolor. Nunc porttitor imperdiet enim, ut auctor lorem fringilla at. Vivamus sollicitudin, justo ac blandit interdum, tellus turpis porta mauris, quis convallis massa ipsum quis lorem. Integer convallis pretium nisl sit amet vehicula. Mauris posuere ipsum ex.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut efficitur commodo est quis mattis. Curabitur egestas enim sed est consectetur, eget porta quam viverra. Vivamus elit nisl, egestas vel rutrum fermentum, tempor at neque. Cras eros ipsum, pharetra quis sodales non, dignissim nec nisl. Mauris at ante ex. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aliquam porta massa accumsan, euismod tellus at, condimentum orci. Duis pulvinar, lorem eu feugiat ullamcorper, nisl ante tincidunt tellus, ac egestas nulla felis molestie dolor. Nunc porttitor imperdiet enim, ut auctor lorem fringilla at. Vivamus sollicitudin, justo ac blandit interdum, tellus turpis porta mauris, quis convallis massa ipsum quis lorem. Integer convallis pretium nisl sit amet vehicula. Mauris posuere ipsum ex.[^1]
 
-Integer accumsan ligula odio, ac ornare lacus congue sed. Suspendisse dictum elementum mi, eu condimentum nulla mollis nec. Sed velit ex, interdum ac magna ut, ultrices viverra lacus. Etiam a sapien ullamcorper, blandit leo at, iaculis ex. Praesent tincidunt ornare nisl, vitae efficitur ipsum elementum vitae. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer libero diam, pellentesque ac rutrum vel, tincidunt at orci. Etiam ornare euismod sem eget mattis. Suspendisse et massa justo. Nullam mollis diam dui, nec auctor elit venenatis ut. Proin eu risus a quam facilisis cursus sed congue lacus. Sed vel lacus in purus malesuada consequat ut ac odio.
+[^1]: This is a numbered footnote.
+
+Integer accumsan ligula odio, ac ornare lacus congue sed. Suspendisse dictum elementum mi, eu condimentum nulla mollis nec. Sed velit ex, interdum ac magna ut, ultrices viverra lacus. Etiam a sapien ullamcorper, blandit leo at, iaculis ex. Praesent tincidunt ornare nisl, vitae efficitur ipsum elementum vitae. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer libero diam, pellentesque ac rutrum vel, tincidunt at orci. Etiam ornare euismod sem eget mattis. Suspendisse et massa justo. Nullam mollis diam dui, nec auctor elit venenatis ut. Proin eu risus a quam facilisis cursus sed congue lacus. Sed vel lacus in purus malesuada consequat ut ac odio. [^named]
+
+[^named]: This is a named footnote.
 
 Phasellus ac aliquet quam. Fusce at interdum eros. Morbi vel dignissim erat. Sed et ex a est bibendum ornare ut vel ipsum. Nam dapibus, ante euismod bibendum consequat, urna nulla dapibus lectus, in dignissim odio sapien a libero. Donec quis orci luctus felis viverra mattis. Sed diam leo, accumsan ornare auctor sit amet, ultricies eget tellus. Ut dignissim, risus et ornare laoreet, metus dui aliquet odio, quis fermentum elit ante ac lorem. Etiam venenatis consequat quam, vel convallis nisl varius sit amet. Pellentesque libero nulla, gravida nec feugiat sit amet, aliquet sed ex. Suspendisse nulla nibh, mollis a erat quis, pharetra semper nulla. Morbi blandit imperdiet mauris ut pellentesque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et elit diam. Nulla gravida faucibus ligula, eget consectetur ex aliquet vel. Sed finibus vestibulum nibh, at blandit velit faucibus vitae.
 
@@ -132,7 +136,8 @@ Phasellus finibus ac est vitae consectetur. Donec a condimentum nisi, ut accumsa
 ggplot(mydata, aes(x = factor(cyl), y = mpg)) +
   geom_jitter() +
   geom_violin(alpha = 0.4) +
-  labs(x = "# cylinders", y = "average miles/gallon")
+  labs(x = "# cylinders", y = "average miles/gallon") +
+    theme_dark()
 ```
 
 
