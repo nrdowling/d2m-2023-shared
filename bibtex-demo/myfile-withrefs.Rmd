@@ -3,6 +3,7 @@ title: "hello world"
 author: "natalie"
 date: "2/23/2023"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 bibliography: "inline-cites-demo.bib"
@@ -58,17 +59,23 @@ plot(pressure)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
----
-nocite: |
-  @tierney2020rmarkdown, @douglas2022introduction
----
+Citations will only appear in the references section if they are actually referred to at least once in your document. Including the bibtex entry in your .bib file is not sufficient^[You can capitalize on this in creative ways. For example, if you often write papers on a topic that will share many -- but not all -- citations, you can create a "master" .bib for that topic to use with all papers on that topic. Only the references included in the text will generate in the document.] However, you can specify references that should appear in your bibliography even when they aren't in your text, provided they have entries in your .bib file.
+
+<!-- The "nocite:" meta-info block can appear anywhere in the text, for example here within the text of the paper. -->
+
+<!-- --- -->
+<!-- nocite: | -->
+<!--   @tierney2020rmarkdown, @douglas2022introduction -->
+<!-- --- -->
 
 # References
 
 <div id="refs"></div>
 
----
-nocite: |
-  @tierney2020rmarkdown, @douglas2022introduction
----
+<!-- Typically though, the "nocite:" meta-info block is placed here, immediately following the html (above) that generates your refs section. Try uncommenting each of these blocks individually and both together and compare the results. -->
+
+<!-- --- -->
+<!-- nocite: | -->
+<!--   @tierney2020rmarkdown, @douglas2022introduction -->
+<!-- --- -->
 
