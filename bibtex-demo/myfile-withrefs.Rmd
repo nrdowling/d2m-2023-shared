@@ -3,9 +3,9 @@ title: "hello world"
 author: "natalie"
 date: "2/23/2023"
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 bibliography: "inline-cites-demo.bib"
 csl: apa3auth.csl
 ---

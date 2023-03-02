@@ -1,0 +1,145 @@
+---
+title             : "Choosing a car to optimize miles per gallon"
+shorttitle        : "Optimizing miles per gallon"
+
+author: 
+  - name          : "Marisa Casillas"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Rosenwald Hall, UChicago"
+    email         : "mcasillas@uchicago.edu"
+
+affiliation:
+  - id            : "1"
+    institution   : "University of Chicago"
+
+authornote: |
+  Please email mcasillas@uchicago.edu for questions about this important research.
+
+abstract: |
+  Gas is expensive and burning it is bad for environmental health. How do I choose a car to optimize my gas mileage? We examine a few potential variables to help answer this question.
+  
+keywords          : "Fuel efficiency, transmission, engine size"
+
+bibliography      : "inline-cites-demo.bib"
+
+floatsintext      : yes
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : no
+mask              : no
+draft             : no
+numbersections    : yes
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+options(scipen=1, digits=2)
+library(tidyverse)
+library(lme4)
+```
+
+```{r basic-data-visualization}
+wt.hist <- ggplot(mtcars, aes(wt)) +
+  geom_histogram()
+```
+
+```{r prep-data}
+mtcars.tidy <- mtcars %>%
+  rownames_to_column("car") %>%
+  as_tibble() %>%
+  separate(car, c("brand", "model"), " ", extra = "merge", fill = "right") %>%
+  mutate(
+    wt.class = case_when(
+      wt < 2.5 ~ "light",
+      wt >= 2.5 & wt <= 4.5 ~ "medium",
+      wt > 4.5 ~ "heavy"),
+    wt.class = factor(wt.class, levels = c("light", "medium", "heavy")),
+    transmission = factor(am, labels = c("automatic", "manual"))
+    )
+```
+
+```{r plot-interesting-vars}
+mpg.by.wt <- ggplot(mtcars.tidy,
+                    aes(cyl, mpg, color = wt.class, group = wt.class)) +
+  geom_jitter()
+
+mpg.by.tr <- ggplot(mtcars.tidy,
+                    aes(cyl, mpg, color = transmission, group = transmission)) +
+  geom_jitter()
+```
+
+# Introduction
+
+In the `mtcars` dataset [@henderson1981building] there are `r nrow(mtcars)` cars documented, from `r length(unique(mtcars.tidy$brand))` brands. The unique car types documented are: `r paste(c(paste(rownames(mtcars[1:(nrow(mtcars)-1),]), collapse = ", "), ", and ", rownames(mtcars[nrow(mtcars),])), collapse = "")`. The mean mpg is `r round(mean(mtcars$mpg),0)` (median = `r median(mtcars$mpg)`; sd = `r sd(mtcars$mpg)`; range = `r min(mtcars$mpg)`--`r max(mtcars$mpg)`). The cars range in number of cylinders from `r min(mtcars$cyl)` to `r max(mtcars$cyl)`, though there are no cars with odd numbers of cylinders.
+
+```{r summary-tbl, results = "asis"}
+mtcars.tidy %>%
+  group_by(brand) %>%
+  summarize(
+    `# Cylinders` = mean(cyl),
+    `Weight` = mean(wt),
+    `# models` = n()
+    ) %>%
+  arrange(`# Cylinders`) %>%
+  knitr::kable(caption = "Brands included, along with average number of cylinders and average weight among the number of models included for each brand.")
+```
+
+We show the unique brands along with their average number of cylinders, average weight, and number of models represented in the dataset in Table \@ref(tab:summary-tbl).
+
+```{r run-lm}
+mpg.model <- lmer(mpg ~ cyl * transmission + (1|brand), mtcars.tidy)
+mpg.model.tbl <- broom.mixed::tidy(mpg.model)
+```
+
+
+# Results
+
+We modeled mileage with a linear mixed-effects regression, including fixed effects of number of cylinders (numeric), transmission (automatic or manual), and their interaction, as well as a random effect of brand.^[`lmer(mileage ~ cylinders * transmission + (1|brand), data)`] Increases in number of cylinders was associated with significant decreases in mileage (_B_ = `r mpg.model.tbl$estimate[which(mpg.model.tbl$term == "cyl")]`, _SE_ = `r mpg.model.tbl$std.error[which(mpg.model.tbl$term == "cyl")]`, _t_ = `r mpg.model.tbl$statistic[which(mpg.model.tbl$term == "cyl")]`). Meanwhile, manual transmissions were associated with significant increases in mileage compared to automatic ones (_B_ = `r mpg.model.tbl$estimate[which(mpg.model.tbl$term == "transmissionmanual")]`, _SE_ = `r mpg.model.tbl$std.error[which(mpg.model.tbl$term == "transmissionmanual")]`, _t_ = `r mpg.model.tbl$statistic[which(mpg.model.tbl$term == "transmissionmanual")]`). That said, the decrease in mileage with more cylinders was significantly greater for manual transmission vehicles than automatic ones (_B_ = `r mpg.model.tbl$estimate[which(mpg.model.tbl$term == "cyl:transmissionmanual")]`, _SE_ = `r mpg.model.tbl$std.error[which(mpg.model.tbl$term == "cyl:transmissionmanual")]`, _t_ = `r mpg.model.tbl$statistic[which(mpg.model.tbl$term == "cyl:transmissionmanual")]`).
+
+```{r plot-primary-results, fig.cap="Miles per gallon as a function of nunber of cylinders and transmission type in the `mtcars` dataset."}
+ggplot(mtcars.tidy, aes(cyl, mpg, color = transmission, fill = transmission)) +
+  geom_jitter() +
+  geom_smooth(method = "lm") +
+  scale_color_manual(name = "Transmission\ntype",
+                     values = c("royalblue", "magenta")) +
+  scale_fill_manual(name = "Transmission\ntype",
+                    values = c("royalblue", "magenta")) +
+  labs(x = "Number of cylinders", y = "Miles per gallon") +
+  theme_classic()
+```
+
+These effects are visualized in Figure \@ref(fig:plot-primary-results). 
+
+# Discussion {#disc}
+
+In this study we investigated the relationship between miles per gallon, number of cylinders, and transmission type in the `mtcars` dataset. Unsurprisingly, cars with more cylinders and cars with automatic transmissions had lower mileage. The effect of transmission depended on the number of cylinders, such that the mileage benefit associated with manual transmissions decreased for cars with more cylinders. Based on these data, someone trying to maximize their mileage should choose a manual transmission, low-cylinder vehicle.
+
+## References we love {#refs}
+
+You may want to cite references in different formats depending on the surrounding sentential context, e.g.: Casillas, in her [-@casillas2022d2mr] course, states that Rmarkdown is awesome. Rmarkdown is awesome [@xie2018bookdown; @casillas2022d2mr; @casillas2021r]. Rmarkdown is awesome [e.g., @xie2018bookdown; @casillas2022d2mr]. Same-year, same-author publications are automatically disambiguated [e.g., @casillas2021r; @casillas2021productive]. We learned all about ggplot [see @wickham2016r4ds, ch. 1]. We learned about ggplot with @wickham2016r4ds [, ch. 1].
+
+This reproducible manuscript is written in Rmarkdown [@xie2018bookdown], using the lme4 [@lme4] to run statistical models and ggplot2 [@ggplot2] within the tidyverse package [@wickham2016r4ds] to generate plots.
+
+We summarize our findings in subsection \@ref(disc) and note that subsection \@ref(refs) is unrelated to this report.
+
+\newpage
+
+---
+nocite: |
+  @tierney2020rmarkdown, @douglas2022introduction
+---
+
+# References
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id="refs" custom-style="Bibliography"></div>
+\endgroup
